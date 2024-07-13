@@ -2,6 +2,7 @@ import { useClipboard } from "@mantine/hooks";
 import { Card, CardBody, CardHeader } from "@nextui-org/card";
 import { Button, Divider, Tooltip } from "@nextui-org/react";
 import { Check } from "lucide-react";
+import Highlighter from "react-highlight-words";
 
 import { cn } from "../lib/utils";
 import { IPackages } from "../types/types";
@@ -11,9 +12,13 @@ interface IPackageCardProps {
     IPackages["results"][number],
     { name: string; latest: string }
   >;
+  searchedPackageQuery?: string;
 }
 
-const PackageCard = ({ packageItem }: IPackageCardProps): JSX.Element => {
+const PackageCard = ({
+  packageItem,
+  searchedPackageQuery,
+}: IPackageCardProps): JSX.Element => {
   const clipboard = useClipboard({ timeout: 1000 });
 
   const onCopyButtonClick = (): void => {
@@ -23,7 +28,12 @@ const PackageCard = ({ packageItem }: IPackageCardProps): JSX.Element => {
   return (
     <Card className="z-20" isHoverable>
       <CardHeader className="flex justify-center text-center">
-        <h1 className="text-2xl font-semibold">{packageItem.name}</h1>
+        <Highlighter
+          className="text-2xl font-semibold"
+          searchWords={[searchedPackageQuery || ""]}
+          autoEscape
+          textToHighlight={packageItem.name}
+        />
       </CardHeader>
 
       <Divider />

@@ -1,6 +1,6 @@
-import { useIntersection } from "@mantine/hooks";
-import { Spinner } from "@nextui-org/react";
-import { useEffect, useRef, useState } from "react";
+import { useIntersection, useDebouncedValue } from "@mantine/hooks";
+import { Input, Spinner } from "@nextui-org/react";
+import { ChangeEvent, useEffect, useRef, useState } from "react";
 
 import { PACKAGES_SHOWN } from "../constants/constants";
 import { usePackages } from "../hooks/usePackages";
@@ -20,16 +20,24 @@ const Main = (): JSX.Element => {
   });
 
   const [packagesShown, setPackagesShown] = useState(PACKAGES_SHOWN);
+  const [packageName, setPackageName] = useState<string>("");
+  const [debouncedPackageName] = useDebouncedValue(packageName, 500);
 
-  useEffect(() => {
-    if (
-      entry?.isIntersecting &&
-      packageItems?.total &&
-      packagesShown < packageItems?.total
-    ) {
-      setPackagesShown((prev) => prev + PACKAGES_SHOWN);
-    }
-  }, [entry, packageItems?.total, packagesShown]);
+  // useEffect(() => {
+  //   if (
+  //     entry?.isIntersecting &&
+  //     packageItems?.total &&
+  //     packagesShown < packageItems?.total
+  //   ) {
+  //     setPackagesShown((prev) => prev + PACKAGES_SHOWN);
+  //   }
+  // }, [entry, packageItems?.total, packagesShown]);
+
+  const onInputChange = (e: ChangeEvent<HTMLInputElement>): void => {
+    const { value } = e.target;
+
+    setPackageName(value);
+  };
 
   if (error) {
     return <div>Error</div>;
@@ -45,11 +53,31 @@ const Main = (): JSX.Element => {
   }
 
   return (
-    <div className="relative h-screen w-screen overflow-auto p-5">
+    <div className="relative h-screen w-screen space-y-10 overflow-auto p-5">
+      <Input
+        value={packageName}
+        onChange={onInputChange}
+        onClear={() => setPackageName("")}
+        isClearable
+        type="text"
+        label="Package name"
+        variant="flat"
+        size="lg"
+        placeholder="Start typing package name..."
+        className="z-20 m-auto w-full md:w-[75vw] lg:w-[50vw]"
+      />
+
       <PackageCards>
         {packageItems?.results
           .slice(0, packagesShown)
-          .map((item) => <PackageCard key={item.name} packageItem={item} />)}
+          .filter((item) => item.name.includes(debouncedPackageName))
+          .map((item) => (
+            <PackageCard
+              key={item.name}
+              packageItem={item}
+              searchedPackageQuery={debouncedPackageName}
+            />
+          ))}
       </PackageCards>
 
       <DotPattern
