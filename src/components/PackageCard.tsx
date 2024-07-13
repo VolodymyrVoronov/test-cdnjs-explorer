@@ -1,4 +1,4 @@
-import { useClipboard } from "@mantine/hooks";
+import { useClipboard, useHover } from "@mantine/hooks";
 import { Card, CardBody, CardHeader } from "@nextui-org/card";
 import { Button, Divider, Tooltip } from "@nextui-org/react";
 import { Check } from "lucide-react";
@@ -7,6 +7,8 @@ import Highlighter from "react-highlight-words";
 
 import { cn } from "../lib/utils";
 import { IPackages } from "../types/types";
+
+import Meteors from "./ui/meteors";
 
 interface IPackageCardProps {
   packageItem: Extract<
@@ -19,13 +21,14 @@ interface IPackageCardProps {
 const PackageCard = memo(
   ({ packageItem, searchedPackageQuery }: IPackageCardProps): JSX.Element => {
     const clipboard = useClipboard({ timeout: 1000 });
+    const { hovered, ref } = useHover();
 
     const onCopyButtonClick = (): void => {
       clipboard.copy(packageItem.latest);
     };
 
     return (
-      <Card className="z-20" isHoverable>
+      <Card ref={ref} className="z-20" isHoverable>
         <CardHeader className="flex justify-center text-center">
           <Highlighter
             className="text-2xl font-semibold"
@@ -63,6 +66,8 @@ const PackageCard = memo(
             Explore
           </Button>
         </CardBody>
+
+        {hovered ? <Meteors number={30} /> : null}
       </Card>
     );
   },
