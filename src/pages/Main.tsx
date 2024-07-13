@@ -1,7 +1,8 @@
+import { Spinner } from "@nextui-org/react";
 import { useState } from "react";
-import { usePackages } from "../hooks/usePackages";
 
 import { PACKAGES_SHOWN } from "../constants/constants";
+import { usePackages } from "../hooks/usePackages";
 import { cn } from "../lib/utils";
 
 import PackageCard from "../components/PackageCard";
@@ -18,7 +19,12 @@ const Main = (): JSX.Element => {
   }
 
   if (isLoading) {
-    return <div>Loading</div>;
+    return (
+      <Spinner
+        size="lg"
+        className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"
+      />
+    );
   }
 
   console.log("packageItems", packageItems?.total);
