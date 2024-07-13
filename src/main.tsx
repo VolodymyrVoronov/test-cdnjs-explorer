@@ -6,8 +6,9 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 
 import { ROUTES } from "./constants/constants.ts";
 
-import Start from "./pages/Start.tsx";
+import ErrorPage from "./pages/ErrorPage.tsx";
 import Main from "./pages/Main.tsx";
+import Start from "./pages/Start.tsx";
 
 import "./index.css";
 
@@ -28,13 +29,9 @@ const router = createBrowserRouter([
     element: <Main />,
     path: ROUTES.MAIN,
   },
-  // {
-  //   element: <ArtDetails />,
-  //   path: `${ROUTES.ART}/:artId`,
-  // },
   {
     path: "*",
-    element: <div>404</div>,
+    element: <ErrorPage />,
   },
 ]);
 
