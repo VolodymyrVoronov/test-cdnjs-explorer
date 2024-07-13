@@ -20,7 +20,9 @@ const Main = (): JSX.Element => {
   const [debouncedPackageName] = useDebouncedValue(packageName, 500);
 
   useKeyPress("Esc", () => {
-    setPackageName("");
+    if (packageName) {
+      setPackageName("");
+    }
   });
 
   if (error) {
@@ -86,7 +88,7 @@ const Main = (): JSX.Element => {
         cy={1}
         cr={1}
         className={cn(
-          "[mask-image:radial-gradient(1000px_circle_at_center,white,transparent)]",
+          "fixed [mask-image:radial-gradient(1000px_circle_at_center,white,transparent)]",
         )}
       />
 
