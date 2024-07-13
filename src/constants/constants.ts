@@ -10,4 +10,4 @@ export const ROUTES = {
 
 export const URL = "https://api.cdnjs.com/libraries/";
 export const REQUEST_ERROR = 404;
-export const PACKAGES_SHOWN = 25;
+export const PACKAGES_SHOWN = 50;

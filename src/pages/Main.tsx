@@ -1,5 +1,6 @@
+import { useIntersection } from "@mantine/hooks";
 import { Spinner } from "@nextui-org/react";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import { PACKAGES_SHOWN } from "../constants/constants";
 import { usePackages } from "../hooks/usePackages";
@@ -12,7 +13,23 @@ import DotPattern from "../components/ui/dot-pattern";
 const Main = (): JSX.Element => {
   const { isLoading, error, packageItems } = usePackages();
 
+  const containerRef = useRef<HTMLDivElement>(null);
+  const { ref, entry } = useIntersection({
+    root: containerRef.current,
+    threshold: 1,
+  });
+
   const [packagesShown, setPackagesShown] = useState(PACKAGES_SHOWN);
+
+  useEffect(() => {
+    if (
+      entry?.isIntersecting &&
+      packageItems?.total &&
+      packagesShown < packageItems?.total
+    ) {
+      setPackagesShown((prev) => prev + PACKAGES_SHOWN);
+    }
+  }, [entry, packageItems?.total, packagesShown]);
 
   if (error) {
     return <div>Error</div>;
@@ -26,8 +43,6 @@ const Main = (): JSX.Element => {
       />
     );
   }
-
-  console.log("packageItems", packageItems?.total);
 
   return (
     <div className="relative h-screen w-screen overflow-auto p-5">
@@ -47,6 +62,8 @@ const Main = (): JSX.Element => {
           "[mask-image:radial-gradient(1000px_circle_at_center,white,transparent)]",
         )}
       />
+
+      <div ref={ref} />
     </div>
   );
 };

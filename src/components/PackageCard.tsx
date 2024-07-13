@@ -22,14 +22,14 @@ const PackageCard = ({ packageItem }: IPackageCardProps): JSX.Element => {
 
   return (
     <Card className="z-20" isHoverable>
-      <CardHeader className="flex justify-center">
+      <CardHeader className="flex justify-center text-center">
         <h1 className="text-2xl font-semibold">{packageItem.name}</h1>
       </CardHeader>
 
       <Divider />
 
       <CardBody className="gap-3">
-        <Tooltip content={packageItem.latest} color="primary">
+        <Tooltip content={packageItem.latest} color="secondary">
           <Button
             onClick={onCopyButtonClick}
             type="button"
