@@ -31,8 +31,6 @@ const PackageDetails = ({
 
   const { isLoading, error, packageItem } = usePackage(packageName);
 
-  console.log(packageItem);
-
   return (
     <Modal
       isOpen={isOpen}
