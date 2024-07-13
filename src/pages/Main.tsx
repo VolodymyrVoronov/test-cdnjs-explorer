@@ -1,6 +1,8 @@
-import { useIntersection, useDebouncedValue } from "@mantine/hooks";
-import { Input, Spinner } from "@nextui-org/react";
-import { ChangeEvent, useEffect, useRef, useState } from "react";
+import { useDebouncedValue } from "@mantine/hooks";
+import { Button, Input, Spinner } from "@nextui-org/react";
+import { useKeyPress } from "ahooks";
+import { ArrowDown } from "lucide-react";
+import { ChangeEvent, useState } from "react";
 
 import { PACKAGES_SHOWN } from "../constants/constants";
 import { usePackages } from "../hooks/usePackages";
@@ -13,31 +15,13 @@ import DotPattern from "../components/ui/dot-pattern";
 const Main = (): JSX.Element => {
   const { isLoading, error, packageItems } = usePackages();
 
-  const containerRef = useRef<HTMLDivElement>(null);
-  const { ref, entry } = useIntersection({
-    root: containerRef.current,
-    threshold: 1,
-  });
-
   const [packagesShown, setPackagesShown] = useState(PACKAGES_SHOWN);
   const [packageName, setPackageName] = useState<string>("");
   const [debouncedPackageName] = useDebouncedValue(packageName, 500);
 
-  // useEffect(() => {
-  //   if (
-  //     entry?.isIntersecting &&
-  //     packageItems?.total &&
-  //     packagesShown < packageItems?.total
-  //   ) {
-  //     setPackagesShown((prev) => prev + PACKAGES_SHOWN);
-  //   }
-  // }, [entry, packageItems?.total, packagesShown]);
-
-  const onInputChange = (e: ChangeEvent<HTMLInputElement>): void => {
-    const { value } = e.target;
-
-    setPackageName(value);
-  };
+  useKeyPress("Esc", () => {
+    setPackageName("");
+  });
 
   if (error) {
     return <div>Error</div>;
@@ -52,24 +36,39 @@ const Main = (): JSX.Element => {
     );
   }
 
+  const onInputChange = (e: ChangeEvent<HTMLInputElement>): void => {
+    const { value } = e.target;
+
+    setPackageName(value);
+  };
+
+  const onLoadMoreButtonClick = (): void => {
+    setPackagesShown((prev) => prev + PACKAGES_SHOWN);
+  };
+
   return (
     <div className="relative h-screen w-screen space-y-10 overflow-auto p-5">
-      <Input
-        value={packageName}
-        onChange={onInputChange}
-        onClear={() => setPackageName("")}
-        isClearable
-        type="text"
-        label="Package name"
-        variant="flat"
-        size="lg"
-        placeholder="Start typing package name..."
-        className="z-20 m-auto w-full md:w-[75vw] lg:w-[50vw]"
-      />
+      <div className="sticky top-0 z-30 rounded-xl py-2 backdrop-blur-xl backdrop-filter">
+        <Input
+          value={packageName}
+          onChange={onInputChange}
+          onClear={() => setPackageName("")}
+          isClearable
+          type="text"
+          label="Package name"
+          variant="flat"
+          size="lg"
+          placeholder="Start typing package name..."
+          className="m-auto w-full md:w-[75vw] lg:w-[50vw]"
+        />
+      </div>
 
       <PackageCards>
         {packageItems?.results
-          .slice(0, packagesShown)
+          .slice(
+            0,
+            debouncedPackageName !== "" ? packageItems?.total : packagesShown,
+          )
           .filter((item) => item.name.includes(debouncedPackageName))
           .map((item) => (
             <PackageCard
@@ -91,7 +90,20 @@ const Main = (): JSX.Element => {
         )}
       />
 
-      <div ref={ref} />
+      {packagesShown < (packageItems?.total as number) &&
+        debouncedPackageName === "" && (
+          <div className="flex justify-center">
+            <Button
+              onClick={onLoadMoreButtonClick}
+              type="button"
+              color="primary"
+              variant="shadow"
+              endContent={<ArrowDown className="h-5 w-5" />}
+            >
+              Show more
+            </Button>
+          </div>
+        )}
     </div>
   );
 };

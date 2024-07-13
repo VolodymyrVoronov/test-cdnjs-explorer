@@ -2,6 +2,7 @@ import { useClipboard } from "@mantine/hooks";
 import { Card, CardBody, CardHeader } from "@nextui-org/card";
 import { Button, Divider, Tooltip } from "@nextui-org/react";
 import { Check } from "lucide-react";
+import { memo } from "react";
 import Highlighter from "react-highlight-words";
 
 import { cn } from "../lib/utils";
@@ -15,57 +16,56 @@ interface IPackageCardProps {
   searchedPackageQuery?: string;
 }
 
-const PackageCard = ({
-  packageItem,
-  searchedPackageQuery,
-}: IPackageCardProps): JSX.Element => {
-  const clipboard = useClipboard({ timeout: 1000 });
+const PackageCard = memo(
+  ({ packageItem, searchedPackageQuery }: IPackageCardProps): JSX.Element => {
+    const clipboard = useClipboard({ timeout: 1000 });
 
-  const onCopyButtonClick = (): void => {
-    clipboard.copy(packageItem.latest);
-  };
+    const onCopyButtonClick = (): void => {
+      clipboard.copy(packageItem.latest);
+    };
 
-  return (
-    <Card className="z-20" isHoverable>
-      <CardHeader className="flex justify-center text-center">
-        <Highlighter
-          className="text-2xl font-semibold"
-          searchWords={[searchedPackageQuery || ""]}
-          autoEscape
-          textToHighlight={packageItem.name}
-        />
-      </CardHeader>
+    return (
+      <Card className="z-20" isHoverable>
+        <CardHeader className="flex justify-center text-center">
+          <Highlighter
+            className="text-2xl font-semibold"
+            searchWords={[searchedPackageQuery || ""]}
+            autoEscape
+            textToHighlight={packageItem.name}
+          />
+        </CardHeader>
 
-      <Divider />
+        <Divider />
 
-      <CardBody className="gap-3">
-        <Tooltip content={packageItem.latest} color="secondary">
-          <Button
-            onClick={onCopyButtonClick}
-            type="button"
-            color="primary"
-            variant="solid"
-            size="sm"
-            className={cn({
-              "bg-green-500": clipboard.copied,
-            })}
-          >
-            {clipboard.copied ? (
-              <div className="flex flex-row items-center gap-2">
-                Copied <Check className="h-4 w-4" />
-              </div>
-            ) : (
-              "Copy CDN link"
-            )}
+        <CardBody className="justify-end gap-3">
+          <Tooltip content={packageItem.latest} color="secondary">
+            <Button
+              onClick={onCopyButtonClick}
+              type="button"
+              color="primary"
+              variant="solid"
+              size="sm"
+              className={cn({
+                "bg-green-500": clipboard.copied,
+              })}
+            >
+              {clipboard.copied ? (
+                <div className="flex flex-row items-center gap-2">
+                  Copied <Check className="h-4 w-4" />
+                </div>
+              ) : (
+                "Copy CDN link"
+              )}
+            </Button>
+          </Tooltip>
+
+          <Button type="button" color="primary" variant="bordered" size="sm">
+            Explore
           </Button>
-        </Tooltip>
-
-        <Button type="button" color="primary" variant="bordered" size="sm">
-          Explore
-        </Button>
-      </CardBody>
-    </Card>
-  );
-};
+        </CardBody>
+      </Card>
+    );
+  },
+);
 
 export default PackageCard;
