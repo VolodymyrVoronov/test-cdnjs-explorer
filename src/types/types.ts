@@ -9,6 +9,8 @@ export interface IPackages {
 
 interface Author {
   name: string;
+  email?: string;
+  url?: string;
 }
 
 interface FileMap {
