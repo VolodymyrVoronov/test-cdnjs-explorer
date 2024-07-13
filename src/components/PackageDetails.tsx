@@ -10,6 +10,7 @@ import { Button, Chip, Link, Spinner } from "@nextui-org/react";
 
 import { usePackage } from "../hooks/usePackage";
 import { formatGithubUrl } from "../lib/utils";
+import CopyButton from "./CopyButton";
 
 interface IPackageDetailsProps {
   isModalOpen: boolean;
@@ -29,6 +30,8 @@ const PackageDetails = ({
   });
 
   const { isLoading, error, packageItem } = usePackage(packageName);
+
+  console.log(packageItem);
 
   return (
     <Modal
@@ -141,7 +144,11 @@ const PackageDetails = ({
               </>
             )}
 
-            <ModalFooter>
+            <ModalFooter className="flex justify-between">
+              {packageItem ? (
+                <CopyButton packageItem={packageItem} size="md" />
+              ) : null}
+
               <Button
                 color="danger"
                 variant="light"

@@ -1,15 +1,14 @@
-import { useClipboard, useHover } from "@mantine/hooks";
+import { useHover } from "@mantine/hooks";
 import { Card, CardBody, CardHeader } from "@nextui-org/card";
-import { Button, Divider, Tooltip } from "@nextui-org/react";
-import { Check } from "lucide-react";
+import { Button, Divider } from "@nextui-org/react";
 import { memo, useState } from "react";
 import Highlighter from "react-highlight-words";
 
-import { cn } from "../lib/utils";
 import { IPackages } from "../types/types";
 
-import Meteors from "./ui/meteors";
+import CopyButton from "./CopyButton";
 import PackageDetails from "./PackageDetails";
+import Meteors from "./ui/meteors";
 
 interface IPackageCardProps {
   packageItem: Extract<
@@ -21,14 +20,9 @@ interface IPackageCardProps {
 
 const PackageCard = memo(
   ({ packageItem, searchedPackageQuery }: IPackageCardProps): JSX.Element => {
-    const clipboard = useClipboard({ timeout: 1000 });
     const { hovered, ref } = useHover();
 
     const [isModalOpen, setIsModalOpen] = useState(false);
-
-    const onCopyButtonClick = (): void => {
-      clipboard.copy(packageItem.latest);
-    };
 
     const onExploreButtonClick = (): void => {
       setIsModalOpen(true);
@@ -49,26 +43,7 @@ const PackageCard = memo(
           <Divider />
 
           <CardBody className="justify-end gap-3">
-            <Tooltip content={packageItem.latest} color="secondary">
-              <Button
-                onClick={onCopyButtonClick}
-                type="button"
-                color="primary"
-                variant="solid"
-                size="sm"
-                className={cn({
-                  "bg-green-500": clipboard.copied,
-                })}
-              >
-                {clipboard.copied ? (
-                  <div className="flex flex-row items-center gap-2">
-                    Copied <Check className="h-4 w-4" />
-                  </div>
-                ) : (
-                  "Copy CDN link"
-                )}
-              </Button>
-            </Tooltip>
+            <CopyButton packageItem={packageItem} />
 
             <Button
               onClick={onExploreButtonClick}
